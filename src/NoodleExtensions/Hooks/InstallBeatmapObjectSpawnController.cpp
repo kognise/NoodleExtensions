@@ -17,8 +17,7 @@ using namespace UnityEngine;
 using namespace UnityEngine::SceneManagement;
 
 // https://github.com/Aeroluna/Chroma/blob/ebc91c9fa672304ffe5cbf64b31293f56e262159/Chroma/ChromaController.cs#L106
-void Start(BeatmapObjectSpawnController* beatmapObjectSpawnController)
-{
+void Start(BeatmapObjectSpawnController* beatmapObjectSpawnController) {
     BeatmapObjectManager* beatmapObjectManager = reinterpret_cast<BeatmapObjectManager*>(beatmapObjectSpawnController->beatmapObjectSpawner); 
     BeatmapObjectCallbackController* coreSetup = beatmapObjectSpawnController->beatmapObjectCallbackController;
     IAudioTimeSource* IAudioTimeSource = coreSetup->audioTimeSource;
