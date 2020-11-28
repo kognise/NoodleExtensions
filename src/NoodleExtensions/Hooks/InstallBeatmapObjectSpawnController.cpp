@@ -18,18 +18,20 @@ using namespace UnityEngine::SceneManagement;
 
 // https://github.com/Aeroluna/Chroma/blob/ebc91c9fa672304ffe5cbf64b31293f56e262159/Chroma/ChromaController.cs#L106
 void Start(BeatmapObjectSpawnController* beatmapObjectSpawnController) {
-    BeatmapObjectManager* beatmapObjectManager = reinterpret_cast<BeatmapObjectManager*>(beatmapObjectSpawnController->beatmapObjectSpawner); 
+    BeatmapObjectManager* beatmapObjectManager = (BeatmapObjectManager*) beatmapObjectSpawnController->beatmapObjectSpawner; 
     BeatmapObjectCallbackController* coreSetup = beatmapObjectSpawnController->beatmapObjectCallbackController;
     IAudioTimeSource* IAudioTimeSource = coreSetup->audioTimeSource;
     IReadonlyBeatmapData* beatmapData = coreSetup->beatmapData;
 
-    CustomJSONData::CustomBeatmapData* customBeatmap = reinterpret_cast<CustomJSONData::CustomBeatmapData*>(beatmapData);
+    CustomJSONData::CustomBeatmapData* customBeatmap = (CustomJSONData::CustomBeatmapData*) beatmapData;
 
-    if (customBeatmap->customData) {
+    if (customBeatmap && customBeatmap->customData) {
         rapidjson::Value &customData = *customBeatmap->customData->value;
+        
+        if (!customData.HasMember("_environmentRemoval")) return;
+
         rapidjson::GenericArray<false, rapidjson::Value> environmentRemoval = customData["_environmentRemoval"].GetArray();
         std::vector<std::string> ObjectsToKill;
-
 
         for (int i = 0; i < environmentRemoval.Size(); i++) {
             ObjectsToKill[i] = environmentRemoval[i].GetString();
@@ -41,18 +43,10 @@ void Start(BeatmapObjectSpawnController* beatmapObjectSpawnController) {
             auto realObjectName = (System::String*) object->get_name();
             auto sceneName = (System::String*) object->get_scene().get_name();
 
-            if (objectName == "BigTrackLaneRing" || objectName == "TrackLaneRing") {
-                // The game may find a BigTrackLaneRing even if we're only looking to remove just a TrackLaneRing
-                if (objectName == "TrackLaneRing" && realObjectName->Contains(il2cpp_utils::createcsstr("Big"))) {
-                    continue;
-                }
+            NELogger::GetLogger().debug("Removing " + objectName);
 
+            if (il2cpp_utils::createcsstr(objectName)->Equals(realObjectName)) {
                 object->SetActive(false);
-            } else {
-                // Make sure we aren't removing the environment in menus
-                if (realObjectName->Contains(il2cpp_utils::createcsstr("Environment")) && !sceneName->Contains(il2cpp_utils::createcsstr("Menu"))) {
-                    object->SetActive(false);
-                }
             }
         }
     }
