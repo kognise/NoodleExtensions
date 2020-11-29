@@ -6,12 +6,20 @@ using namespace GlobalNamespace;
 
 DEFINE_CLASS(CustomJSONData::CustomBeatmapData);
 
-void CustomJSONData::CustomBeatmapData::ctor() {
-
+void CustomJSONData::CustomBeatmapData::ctor(int numberOfLines) {
+    static auto* ctor = il2cpp_utils::FindMethodUnsafe("", "BeatmapData", ".ctor", 1);
+    CRASH_UNLESS(il2cpp_utils::RunMethod(this, ctor, numberOfLines));
+    this->customData = nullptr;
 }
 
 BeatmapData *CustomJSONData::CustomBeatmapData::GetCopy() {
-    auto copy = CRASH_UNLESS(il2cpp_utils::New<CustomJSONData::CustomBeatmapData*>());
+    auto copy = CRASH_UNLESS(il2cpp_utils::New<CustomJSONData::CustomBeatmapData*>((int) this->beatmapLinesData->Length()));
+
+    this->CopyBeatmapObjects(this, copy);
+    this->CopyBeatmapEvents(this, copy);
+    this->CopyAvailableSpecialEventsPerKeywordDictionary(this, copy);
+    copy->customData = this->customData;
+    
     return copy;
 }
 

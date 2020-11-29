@@ -13,7 +13,7 @@
 #include "NELogger.h"
 
 DECLARE_CLASS_CODEGEN(CustomJSONData, CustomBeatmapData, GlobalNamespace::BeatmapData,
-    DECLARE_CTOR(ctor);
+    DECLARE_CTOR(ctor, int);
 
     DECLARE_OVERRIDE_METHOD(void, Finalize, il2cpp_utils::FindMethod("System", "Object", "Finalize"));
     DECLARE_OVERRIDE_METHOD(BeatmapData *, GetCopy, il2cpp_utils::FindMethod("", "BeatmapData", "GetCopy"));
@@ -27,6 +27,7 @@ DECLARE_CLASS_CODEGEN(CustomJSONData, CustomBeatmapData, GlobalNamespace::Beatma
         REGISTER_METHOD(ctor);
 
         // Register methods
+        REGISTER_METHOD(GetCopy);
         REGISTER_METHOD(Finalize);
 
         // Register fields
